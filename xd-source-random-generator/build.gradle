@@ -1,0 +1,62 @@
+description = 'Spring XD Random Source Module'
+
+buildscript {
+    repositories {
+        maven { url 'https://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+group = 'io.pivotal.pde.xd.module'
+
+ext {
+    moduleType = 'source'
+    moduleName = 'randgen'
+    springXDVersion='1.2.1.RELEASE'
+}
+
+jar {
+
+    manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+    manifest.attributes['Implementation-Title'] = project.name
+    manifest.attributes['Implementation-Version'] = project.version
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/plugins-release' }
+}
+
+configurations {
+    dirt {}
+    compile.extendsFrom(dirt)
+}
+
+dependencies {
+    dirt "org.springframework.xd:spring-xd-dirt:$springXDVersion"
+    compile 'org.apache.commons:commons-math3:3.1.1'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    description = 'Generates gradlew[.bat] scripts'
+    gradleVersion = '2.7'
+}
+
+defaultTasks 'build'
